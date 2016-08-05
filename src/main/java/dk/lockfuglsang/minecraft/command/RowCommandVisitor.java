@@ -42,7 +42,7 @@ class RowCommandVisitor implements CommandVisitor {
 
     private String getCommandPath(Command cmd) {
         String path = cmd.getParent() != null ? getCommandPath(cmd.getParent()) + " " : "";
-        return path + getShortestCmd(cmd) + getParams(cmd);
+        return path + getShortestCmd(cmd) + CompositeCommand.getParamsAsString(cmd);
     }
 
     private String getShortestCmd(Command cmd) {
@@ -61,18 +61,6 @@ class RowCommandVisitor implements CommandVisitor {
             aliases += "|" + cmd.getAliases()[i];
         }
         return aliases;
-    }
-
-    private String getParams(Command cmd) {
-        String msg = "";
-        for (String param : cmd.getParams()) {
-            if (param.startsWith("?")) {
-                msg += tr(" [{0}]", param.substring(1));
-            } else {
-                msg += tr(" <{0}>", param);
-            }
-        }
-        return msg;
     }
 
     static class Row {

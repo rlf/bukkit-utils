@@ -80,7 +80,7 @@ public class PluginYamlCommandVisitor implements DocumentWriter {
 
     private static String getCommandPath(Command cmd) {
         String path = cmd.getParent() != null ? getCommandPath(cmd.getParent()) + " " : "";
-        return path + cmd.getName();
+        return path + cmd.getName() + CompositeCommand.getParamsAsString(cmd);
     }
 
     @Override
@@ -240,6 +240,20 @@ public class PluginYamlCommandVisitor implements DocumentWriter {
                     desc += "      " + getCmdDescription(commands.get(i));
                 }
                 return desc;
+            }
+            return null;
+        }
+
+        public PermissionNode find(String perm) {
+            if (permission.equals(perm)) {
+                return this;
+            } else if (perm.startsWith(permission)) {
+                for (PermissionNode n : children) {
+                    PermissionNode r = n.find(perm);
+                    if (r != null) {
+                        return r;
+                    }
+                }
             }
             return null;
         }

@@ -205,13 +205,7 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
             }
         }
         msg += "\u00a7a";
-        for (String param : cmd.getParams()) {
-            if (param.startsWith("?")) {
-                msg += " [" + param.substring(1) + "]";
-            } else {
-                msg += " <" + param + ">";
-            }
-        }
+        msg += getParamsAsString(cmd);
         if (cmd instanceof CompositeCommand) {
             msg += " [command|help]";
         }
@@ -221,6 +215,18 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
             msg += " \u00a7c(" + cmd.getPermission() + ")";
         }
         msg += "\n";
+        return msg;
+    }
+
+    public static String getParamsAsString(Command cmd) {
+        String msg = "";
+        for (String param : cmd.getParams()) {
+            if (param.startsWith("?")) {
+                msg += " [" + param.substring(1) + "]";
+            } else {
+                msg += " <" + param + ">";
+            }
+        }
         return msg;
     }
 

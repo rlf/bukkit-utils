@@ -14,12 +14,12 @@ public class PluginYamlCommandVisitorTest {
     @Test
     public void writeToSimple() throws Exception {
         PluginYamlCommandVisitor visitor = new PluginYamlCommandVisitor();
-        AbstractCommandExecutor cmd = new AbstractCommandExecutor("cmd|c", "plugin.cmd", "some description");
+        AbstractCommandExecutor cmd = new AbstractCommandExecutor("cmd|c", "plugin.cmd", "player", "some description");
         cmd.add(new CompositeCommand("sub|s", "plugin.sub", "some sub description"));
         cmd.add(new CompositeCommand("other", "plugin.cmd.other", "some other command"));
         AbstractCommandExecutor cmd2 = new AbstractCommandExecutor("adm|a", "plugin.adm", "hey jude!");
         cmd2.add(new CompositeCommand("subs|ss", "plugin.sub", "some other sub"));
-        cmd2.add(new CompositeCommand("t2", "plugin.cmdtest", "test"));
+        cmd2.add(new CompositeCommand("t2", "plugin.cmdtest", "?optional mandatory", "test"));
         String expected = String.join("\r\n", Files.readAllLines(
                 Paths.get(getClass().getClassLoader().getResource("yml/pluginyml_simple.yml").toURI())));
 

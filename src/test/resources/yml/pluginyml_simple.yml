@@ -30,17 +30,17 @@ permissions:
     description: 'Grants access to /adm - hey jude!'
 
   plugin.cmd:
-    description: 'Grants access to /cmd - some description'
+    description: 'Grants access to /cmd <player> - some description'
 
   plugin.cmd.other:
-    description: 'Grants access to /cmd other - some other command'
+    description: 'Grants access to /cmd <player> other - some other command'
 
   plugin.cmdtest:
-    description: 'Grants access to /adm t2 - test'
+    description: 'Grants access to /adm t2 [optional] <mandatory> - test'
 
   plugin.sub:
     description: |
-      Grants access to /cmd sub - some sub description
+      Grants access to /cmd <player> sub - some sub description
       /adm subs - some other sub
 
 

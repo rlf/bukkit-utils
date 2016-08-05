@@ -7,20 +7,12 @@ import org.bukkit.command.ConsoleCommandSender;
  * Ensures even bad SuperPerm plugins works with * perms.
  */
 public enum PermissionUtil {;
+
+    /**
+     * @deprecated Since 1.11
+     */
+    @Deprecated
     public static boolean hasPermission(CommandSender sender, String perm) {
-        // This is ONLY needed, because some shitty perm-systems don't understand the .* perm.
-        if (sender.isOp() || sender instanceof ConsoleCommandSender || sender.hasPermission(perm)) {
-            return true;
-        } else if (sender.hasPermission("-" + perm)) {
-            return false;
-        }
-        String p = perm;
-        if (perm.endsWith(".*")) {
-            p = perm.substring(0, perm.length() - 2);
-        }
-        if (p.contains(".")) {
-            return hasPermission(sender, p.substring(0, p.lastIndexOf(".")) + ".*");
-        }
-        return false;
+        return sender != null && sender.hasPermission(perm) || sender instanceof ConsoleCommandSender;
     }
 }
