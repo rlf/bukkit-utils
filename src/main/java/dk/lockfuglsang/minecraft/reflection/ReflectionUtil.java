@@ -151,7 +151,7 @@ public class ReflectionUtil {
             } finally {
                 method.setAccessible(wasAccessible);
             }
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | AbstractMethodError e) {
             log.fine("Unable to locate method " + methodName + "(" + Arrays.asList(argTypes) + ") on " + aClass);
         } catch (InvocationTargetException | IllegalAccessException e) {
             log.log(Level.INFO, "Calling " + methodName + " on " + obj + " threw an exception", e);
@@ -215,11 +215,24 @@ public class ReflectionUtil {
     }
 
     private static Field getFieldInternal(Object obj, String fieldName) throws NoSuchFieldException {
-        try {
-            return obj.getClass().getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
-            return obj.getClass().getField(fieldName);
+        return getFieldFromClass(obj.getClass(), fieldName);
+    }
+
+    private static Field getFieldFromClass(Class<?> aClass, String fieldName) throws NoSuchFieldException {
+        if (aClass == null) {
+            throw new NoSuchFieldException("Unable to locate field " + fieldName);
         }
+        try {
+            return aClass.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            // Ignored
+        }
+        try {
+            return aClass.getField(fieldName);
+        } catch (NoSuchFieldException e) {
+            // Ignore
+        }
+        return getFieldFromClass(aClass.getSuperclass(), fieldName);
     }
 
     /**

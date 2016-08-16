@@ -9,7 +9,7 @@ import org.bukkit.command.ConsoleCommandSender;
 public enum PermissionUtil {;
 
     /**
-     * @deprecated Since 1.11
+     * @deprecated Since 1.11 - use sender#hasPermission instead
      */
     @Deprecated
     public static boolean hasPermission(CommandSender sender, String perm) {

@@ -33,13 +33,24 @@ import java.util.logging.Logger;
 public enum FileUtil {;
     private static final Logger log = Logger.getLogger(FileUtil.class.getName());
     private static final Collection<String> allwaysOverwrite = new ArrayList<>();
+    private static final Collection<String> neverOverwrite = new ArrayList<>();
     private static final Map<String, YmlConfiguration> configFiles = new ConcurrentHashMap<>();
     private static Locale locale = Locale.getDefault();
     private static File dataFolder;
 
-    public static void setAllwaysOverwrite(String s) {
-        if (!allwaysOverwrite.contains(s)) {
-            allwaysOverwrite.add(s);
+    public static void setAllwaysOverwrite(String... configs) {
+        for (String s : configs) {
+            if (!allwaysOverwrite.contains(s)) {
+                allwaysOverwrite.add(s);
+            }
+        }
+    }
+
+    public static void setNeverOverwrite(String... configs) {
+        for (String s : configs) {
+            if (!neverOverwrite.contains(s)) {
+                neverOverwrite.add(s);
+            }
         }
     }
 
@@ -153,6 +164,10 @@ public enum FileUtil {;
                 readConfig(configJar, getResource(configName));
                 if (!configFile.exists() || config.getInt("version", 0) < configJar.getInt("version", 0)) {
                     if (configFile.exists()) {
+                        if (neverOverwrite.contains(configName)) {
+                            configFiles.put(configName, config);
+                            return config;
+                        }
                         File backupFolder = new File(getDataFolder(), "backup");
                         backupFolder.mkdirs();
                         String bakFile = String.format("%1$s-%2$tY%2$tm%2$td-%2$tH%2$tM.yml", getBasename(configName), new Date());
