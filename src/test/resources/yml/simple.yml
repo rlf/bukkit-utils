@@ -21,3 +21,4 @@ root:
   a.section.deeper:
     b: # b comment
       c: false # should be false
+"an.annoying:key this.is:for.sure": hello world

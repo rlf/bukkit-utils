@@ -37,3 +37,7 @@ root:
 
           # should be false
           c: false
+an:
+  annoying:key this:
+    is:for:
+      sure: hello world

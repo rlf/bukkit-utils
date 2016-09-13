@@ -212,7 +212,7 @@ public enum FileUtil {;
         return baseName + "_" + locale + fileName.substring(baseName.length());
     }
 
-    private static File getConfigFile(String configName) {
+    public static File getConfigFile(String configName) {
         File file = new File(getDataFolder(), getLocaleName(configName));
         if (file.exists()) {
             return file;
