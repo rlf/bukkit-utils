@@ -176,13 +176,12 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
         } else if (cmdName.matches("[0-9]+")) {
             showUsage(sender, Integer.parseInt(cmdName));
         } else {
-            List<String> cmds = filter(aliasMap.keySet(), cmdName);
+            List<String> cmds = filter(new ArrayList<>(aliasMap.keySet()), cmdName);
             if (cmds.isEmpty()) {
                 showUsage(sender, 1);
             } else {
                 String msg = tr("\u00a77Usage: {0}", getShortDescription(sender, this));
                 if (hasAccess(this, sender)) {
-                    Collections.sort(cmds);
                     for (String key : cmds) {
                         Command scmd = commandMap.get(key);
                         if (scmd != null && hasAccess(scmd, sender)) {

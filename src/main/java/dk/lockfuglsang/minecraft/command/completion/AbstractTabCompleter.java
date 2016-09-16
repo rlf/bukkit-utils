@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,9 +24,10 @@ public abstract class AbstractTabCompleter implements TabCompleter {
         return filter(getTabList(commandSender, term), term);
     }
 
-    public static List<String> filter(Collection<String> list, String prefix) {
+    public static List<String> filter(List<String> list, String prefix) {
         Set<String> filtered = new LinkedHashSet<>();
         if (list != null) {
+            Collections.sort(list);
             String lowerPrefix = prefix.toLowerCase();
             for (String test : list) {
                 if (test.toLowerCase().startsWith(lowerPrefix)) {
