@@ -55,7 +55,7 @@ public class PlainTextCommandVisitor extends RowCommandVisitor implements Docume
                 String cmd = row.getCommand().isEmpty()  ? "" : "/" + row.getCommand();
                 String description = row.getDescription();
                 List<String> strings = FormatUtil.wordWrapStrict(description, colWidths[2]);
-                out.println(String.format(rowFormat, cmd, row.getPermission(), strings.get(0)));
+                out.println(String.format(rowFormat, cmd, row.getPermission(), strings.size() > 0 ? strings.get(0) : ""));
                 for (int i = 1; i < strings.size(); i++) {
                     out.println(String.format(rowFormat, "", "", strings.get(i)));
                 }
