@@ -175,7 +175,7 @@ public class YmlCommentParser {
             lineNum++;
             sb.append(line + "\n");
         }
-        return sb.toString().replaceAll("\n", "\r\n");
+        return sb.toString().replaceAll("\r\n", "\n").replaceAll("\n\r", "\n").replaceAll("\n", "\r\n");
     }
 
     public void load(Reader reader) throws IOException {
