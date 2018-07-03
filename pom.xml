@@ -6,7 +6,7 @@
 
     <groupId>dk.lockfuglsang.minecraft</groupId>
     <artifactId>bukkit-utils</artifactId>
-    <version>1.17</version>
+    <version>1.18</version>
 
     <properties>
         <GITHUB_TOKEN>invalid</GITHUB_TOKEN>
@@ -54,6 +54,18 @@
                 <configuration>
                     <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.github</groupId>

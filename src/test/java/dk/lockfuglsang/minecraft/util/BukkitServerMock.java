@@ -8,7 +8,6 @@ import org.bukkit.Server;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.lang.reflect.Field;
@@ -18,19 +17,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class BukkitServerMock {
-    protected static boolean useMetaData;
+    public static boolean useMetaData;
     /**
      * Stubbing data, allows for advanced stubbing behaviour for item-meta
      */
     protected static Map<ItemMeta, Map<String,String>> itemMetaMap = new HashMap<>();
     private static ItemFactory itemFactoryMock;
 
-    protected static void setupServerMock() throws NoSuchFieldException, IllegalAccessException {
+    public static void setupServerMock() throws NoSuchFieldException, IllegalAccessException {
         Field server = Bukkit.class.getDeclaredField("server");
         server.setAccessible(true);
         Server serverMock = createServerMock();
@@ -48,32 +46,19 @@ public class BukkitServerMock {
                 .thenReturn(true);
 
         when(itemFactoryMock.equals(any(ItemMeta.class), any(ItemMeta.class)))
-                .thenAnswer(new Answer<Boolean>() {
-                    @Override
-                    public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        // Better equals for mocks?
-                        return Objects.equals("" + invocationOnMock.getArguments()[0],
-                                "" + invocationOnMock.getArguments()[1]);
-                    }
+                .thenAnswer((Answer<Boolean>) invocationOnMock -> {
+                    // Better equals for mocks?
+                    return Objects.equals("" + invocationOnMock.getArguments()[0],
+                            "" + invocationOnMock.getArguments()[1]);
                 });
 
         when(itemFactoryMock.getItemMeta(any(Material.class)))
-                .thenAnswer(new Answer<ItemMeta>() {
-                    @Override
-                    public ItemMeta answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return createItemMetaStub();
-                    }
-                });
+                .thenAnswer((Answer<ItemMeta>) invocationOnMock -> createItemMetaStub());
 
         when(itemFactoryMock.asMetaFor(any(ItemMeta.class), any(Material.class)))
-                .thenAnswer(new Answer<ItemMeta>() {
-                    @Override
-                    public ItemMeta answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return invocationOnMock.getArguments()[0] != null
-                                ? (ItemMeta) invocationOnMock.getArguments()[0]
-                                : null;
-                    }
-                });
+                .thenAnswer((Answer<ItemMeta>) invocationOnMock -> invocationOnMock.getArguments()[0] != null
+                        ? (ItemMeta) invocationOnMock.getArguments()[0]
+                        : null);
         when(serverMock.getItemFactory()).thenReturn(itemFactoryMock);
         return serverMock;
     }
@@ -86,41 +71,30 @@ public class BukkitServerMock {
         // Note: This is a HACKY way of stubbing, using mock and toString()
         final Map<String, String> metaData = new TreeMap<>();
         itemMetaMap.put(meta, metaData);
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-                String displayName = "" + invocationOnMock.getArguments()[0];
-                if (displayName.isEmpty()) {
-                    metaData.remove("displayName");
-                } else {
-                    metaData.put("displayName", "" + displayName);
-                }
-                return null;
+        doAnswer((Answer<Void>) invocationOnMock -> {
+            String displayName = "" + invocationOnMock.getArguments()[0];
+            if (displayName.isEmpty()) {
+                metaData.remove("displayName");
+            } else {
+                metaData.put("displayName", "" + displayName);
             }
+            return null;
         }).when(meta).setDisplayName(any(String.class));
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-                List<String> lore = (List<String>) invocationOnMock.getArguments()[0];
-                if (lore != null && !lore.isEmpty()) {
-                    metaData.put("lore", "" + lore);
-                } else {
-                    metaData.remove("lore");
-                }
-                return null;
+        doAnswer((Answer<Void>) invocationOnMock -> {
+            List<String> lore = (List<String>) invocationOnMock.getArguments()[0];
+            if (lore != null && !lore.isEmpty()) {
+                metaData.put("lore", "" + lore);
+            } else {
+                metaData.remove("lore");
             }
+            return null;
         }).when(meta).setLore(any(List.class));
-        when(meta.toString()).thenAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return "" + metaData;
-            }
-        });
+        when(meta.toString()).thenAnswer((Answer<String>) invocationOnMock -> "" + metaData);
         when(meta.clone()).thenReturn(meta); // Don't clone it - we need to verify it
         return meta;
     }
 
-    private static class TestNBTItemStackTagger implements NBTItemStackTagger {
+    public static class TestNBTItemStackTagger implements NBTItemStackTagger {
         @Override
         public String getNBTTag(ItemStack itemStack) {
             if (itemMetaMap.containsKey(itemStack.getItemMeta())) {
