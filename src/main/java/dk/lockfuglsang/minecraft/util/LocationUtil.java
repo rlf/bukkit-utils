@@ -3,6 +3,7 @@ package dk.lockfuglsang.minecraft.util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,9 +22,9 @@ public enum LocationUtil {
         if (loc.getWorld() != null && loc.getWorld().getName() != null) {
             s += loc.getWorld().getName() + ":";
         }
-        s += String.format("%.2f,%.2f,%.2f", loc.getX(), loc.getY(), loc.getZ());
+        s += String.format(Locale.ENGLISH,"%.2f,%.2f,%.2f", loc.getX(), loc.getY(), loc.getZ());
         if (loc.getYaw() != 0f || loc.getPitch() != 0f) {
-            s += String.format(":%.2f:%.2f", loc.getYaw(), loc.getPitch());
+            s += String.format(Locale.ENGLISH, ":%.2f:%.2f", loc.getYaw(), loc.getPitch());
         }
         return s;
     }
