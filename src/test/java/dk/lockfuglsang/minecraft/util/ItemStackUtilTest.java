@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+import static dk.lockfuglsang.minecraft.util.ItemStackMatcher.itemStack;
+import static dk.lockfuglsang.minecraft.util.ItemStackMatcher.itemStacks;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -133,7 +135,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
                 new ItemStack(Material.STONE, 3, (short) 2),
                 new ItemStack(Material.NETHER_FENCE, 2)
         );
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStacks(expected));
     }
 
     @Test
@@ -144,7 +146,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
                 new ItemStack(Material.STONE, 3, (short) 2),
                 new ItemStack(Material.NETHER_FENCE, 2)
         );
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStacks(expected));
     }
 
     @Test
@@ -157,7 +159,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
                 new ItemStack(Material.NETHER_FENCE, 2),
                 new ItemStack(Material.WOOD, 256, (short) 3) // Jungle Wood Planks
         );
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStacks(expected));
     }
 
     @Test
@@ -204,11 +206,11 @@ public class ItemStackUtilTest extends BukkitServerMock {
     public void createItemStackName() throws Exception {
         ItemStack actual = ItemStackUtil.createItemStack("DIRT");
         ItemStack expected = new ItemStack(Material.DIRT, 1);
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStack(expected));
 
         actual = ItemStackUtil.createItemStack("STONE:2"); // Diorite
         expected = new ItemStack(Material.STONE, 1, (short) 2);
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStack(expected));
     }
 
     @Test
@@ -216,11 +218,11 @@ public class ItemStackUtilTest extends BukkitServerMock {
         ItemStack actual = ItemStackUtil.createItemStack("6");
         ItemStack expected = new ItemStack(Material.SAPLING, 1);
         expected.setItemMeta(createItemMetaStub());
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStack(expected));
 
         actual = ItemStackUtil.createItemStack("6:2");
         expected = new ItemStack(Material.SAPLING, 1, (short) 2);
-        assertThat(actual, is(expected));
+        assertThat(actual, itemStack(expected));
     }
 
     @Test
@@ -270,7 +272,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
                 new ItemStack(Material.STONE, 3)
         ));
         List<ItemStack> clone = ItemStackUtil.clone(orig);
-        assertThat(clone, is(orig));
+        assertThat(clone, itemStacks(orig));
         orig.get(0).setAmount(10);
         orig.get(1).setAmount(20);
         orig.remove(2);

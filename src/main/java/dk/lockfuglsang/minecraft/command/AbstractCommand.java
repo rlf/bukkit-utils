@@ -24,7 +24,7 @@ public abstract class AbstractCommand implements Command {
         this.aliases = name.split("\\|");
         this.permission = permission;
         this.description = I18nUtil.tr(description);
-        this.usage = usage;
+        this.usage = I18nUtil.tr(usage);
         this.params = params != null && !params.trim().isEmpty() ? params.split(" ") : new String[0];
     }
 

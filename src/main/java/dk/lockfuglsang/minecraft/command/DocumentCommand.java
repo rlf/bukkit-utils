@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
 /**
@@ -27,7 +28,7 @@ public class DocumentCommand extends AbstractCommand {
     private TabCompleter tabCompleter;
 
     public DocumentCommand(JavaPlugin plugin, String name, String permission) {
-        super(name, permission, "?format ?arg", tr("saves documentation of the commands to a file"));
+        super(name, permission, "?format ?arg", marktr("saves documentation of the commands to a file"));
         this.plugin = plugin;
         tabCompleter = new AbstractTabCompleter() {
             @Override

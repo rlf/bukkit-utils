@@ -351,7 +351,7 @@ public enum ItemStackUtil {
             if (o == null || getClass() != o.getClass()) return false;
             ItemProbability that = (ItemProbability) o;
             return Double.compare(that.probability, probability) == 0 &&
-                    Objects.equals(item, that.item);
+                    Objects.equals(asString(item), asString(that.item));
         }
 
         @Override

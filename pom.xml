@@ -8,9 +8,6 @@
     <artifactId>bukkit-utils</artifactId>
     <version>1.20</version>
 
-    <properties>
-        <GITHUB_TOKEN>invalid</GITHUB_TOKEN>
-    </properties>
     <repositories>
         <repository>
             <id>spigotmc.org</id>
@@ -70,19 +67,28 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.10</version>
+                <version>0.12</version>
                 <configuration>
-                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}:${project.version}</message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
-                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                    <branch>refs/heads/master</branch>                       <!-- remote branch name -->
                     <includes>
                         <include>**/bukkit-utils/**</include>
                     </includes>
-                    <repositoryName>uSkyBlock</repositoryName>      <!-- github repo name -->
+                    <repositoryName>mvn-repo</repositoryName>      <!-- github repo name -->
                     <repositoryOwner>rlf</repositoryOwner>    <!-- github username  -->
                     <merge>true</merge>
                 </configuration>
+                <executions>
+                    <!-- run site-maven-plugin's 'site' target as part of the builder's normal 'deploy' phase -->
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
