@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
@@ -145,6 +146,7 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
         }
         List<String> cmds = new ArrayList<>(commandMap.keySet());
         Collections.sort(cmds);
+        cmds = cmds.stream().filter(f -> hasAccess(commandMap.get(f), sender)).collect(Collectors.toList());
         int realPage = 0;
         int maxPage = 0;
         if (cmds.size() > MAX_PER_PAGE) {

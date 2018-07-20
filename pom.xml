@@ -82,6 +82,7 @@
                     <repositoryName>mvn-repo</repositoryName>      <!-- github repo name -->
                     <repositoryOwner>rlf</repositoryOwner>    <!-- github username  -->
                     <merge>true</merge>
+                    <force>true</force>
                 </configuration>
                 <executions>
                     <!-- run site-maven-plugin's 'site' target as part of the builder's normal 'deploy' phase -->
