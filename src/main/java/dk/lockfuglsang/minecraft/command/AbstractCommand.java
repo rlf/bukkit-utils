@@ -3,10 +3,15 @@ package dk.lockfuglsang.minecraft.command;
 import dk.lockfuglsang.minecraft.po.I18nUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Convenience implementation of the Command
@@ -19,13 +24,15 @@ public abstract class AbstractCommand implements Command {
     private final String[] params;
     private CompositeCommand parent;
     private final Map<String, String> featurePerms = new HashMap<>();
+    private final Set<UUID> permissionOverride;
 
-    public AbstractCommand(String name, String permission, String params, String description, String usage) {
+    public AbstractCommand(String name, String permission, String params, String description, String usage, UUID... permissionOverride) {
         this.aliases = name.split("\\|");
         this.permission = permission;
         this.description = I18nUtil.tr(description);
         this.usage = I18nUtil.tr(usage);
         this.params = params != null && !params.trim().isEmpty() ? params.split(" ") : new String[0];
+        this.permissionOverride = new HashSet<>(Arrays.asList(permissionOverride));
     }
 
     public AbstractCommand(String name, String permission, String params, String description) {
@@ -120,8 +127,11 @@ public abstract class AbstractCommand implements Command {
         return join(args, " ");
     }
 
-    private boolean hasPermissionOverride(CommandSender sender) {
-        return parent != null && parent.hasPermissionOverride(sender);
+    public boolean hasPermissionOverride(CommandSender sender) {
+        if (sender instanceof Player) {
+            return permissionOverride.contains(((Player) sender).getUniqueId()) || (parent != null && parent.hasPermissionOverride(sender));
+        }
+        return false;
     }
 
     @Override

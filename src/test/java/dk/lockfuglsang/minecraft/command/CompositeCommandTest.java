@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 public class CompositeCommandTest {
     private static UUID ownerUUID = UUID.randomUUID();
     private static UUID adminUUID = UUID.randomUUID();
+    private static UUID modUUID = UUID.randomUUID();
     private static BaseCommandExecutor executor;
 
     @BeforeClass
@@ -36,6 +37,13 @@ public class CompositeCommandTest {
             @Override
             public boolean execute(CommandSender sender, String alias, Map<String, Object> data, String... args) {
                 sender.sendMessage("from sub");
+                return false;
+            }
+        });
+        sut.add(new AbstractCommand("sub2", "perm.sub2", "some other sub-command", "yay", null, modUUID) {
+            @Override
+            public boolean execute(CommandSender sender, String alias, Map<String, Object> data, String... args) {
+                sender.sendMessage("from sub2");
                 return false;
             }
         });
@@ -125,18 +133,36 @@ public class CompositeCommandTest {
     }
 
     @Test
-    public void BasePerm_PermissionSubOverride() {
+    public void BasePerm_PermissionCompositeOverride() {
         // Arrange
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(adminUUID);
         when(player.hasPermission(anyString())).thenAnswer((Answer<Boolean>) invocationOnMock ->
-                invocationOnMock.getArguments()[0] == "plugin");
+                invocationOnMock.getArguments()[0] == "plugin"
+        );
         final List<String> messages = recordMessages(player);
 
         // Act
         executor.onCommand(player, null, "alias", new String[]{"admin", "sub"});
 
         assertThat(messages, Matchers.contains(new String[]{"executed admin", "from sub"}));
+    }
+
+    @Test
+    public void BasePerm_PermissionAbstractCommandOverride() {
+        // Arrange
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(modUUID);
+        when(player.hasPermission(anyString())).thenAnswer((Answer<Boolean>) invocationOnMock ->
+                invocationOnMock.getArguments()[0] == "plugin"
+                        || invocationOnMock.getArguments()[0] == "admin.admin.superadmin"
+        );
+        final List<String> messages = recordMessages(player);
+
+        // Act
+        executor.onCommand(player, null, "alias", new String[]{"admin", "sub2"});
+
+        assertThat(messages, Matchers.contains(new String[]{"executed admin", "from sub2"}));
     }
 
     private List<String> recordMessages(Player player) {
