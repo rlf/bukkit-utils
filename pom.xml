@@ -8,6 +8,9 @@
     <artifactId>bukkit-utils</artifactId>
     <version>1.21</version>
 
+    <properties>
+        <github.global.server>github</github.global.server>
+    </properties>
     <repositories>
         <repository>
             <id>spigotmc.org</id>
