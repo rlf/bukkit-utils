@@ -78,4 +78,12 @@ public interface Command {
      * @return A map of permission-node as key, and description as value.
      */
     Map<String,String> getFeaturePermissions();
+
+    /**
+     * Allows for other than permission checking
+     * @param sender     The commandSender requesting permission
+     * @param permission The permission
+     * @return <code>true</code> if the sender can execute this command
+     */
+    boolean hasPermission(CommandSender sender, String permission);
 }

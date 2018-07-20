@@ -3,9 +3,9 @@ package dk.lockfuglsang.minecraft.command;
 import org.bukkit.command.CommandSender;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.Arrays;
@@ -14,18 +14,16 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
-public class AbstractCommandExecutorTest {
-
+public class BaseCommandExecutorTest {
     StringBuffer messages = new StringBuffer();
-    private static AbstractCommandExecutor mycmd;
+    private static BaseCommandExecutor mycmd;
 
     @BeforeClass
     public static void setUp() {
-        mycmd = new AbstractCommandExecutor("mycmd", "myplugin.perm.mycmd", "main myplugin command");
+        mycmd = new BaseCommandExecutor("mycmd", "myplugin.perm.mycmd", "main myplugin command");
         mycmd.add(new AbstractCommand("hello|h", "myplugin.perm.hello", "say hello to the player") {
             @Override
             public boolean execute(CommandSender sender, String alias, Map<String, Object> data, String... args) {
@@ -61,7 +59,7 @@ public class AbstractCommandExecutorTest {
     }
 
     private void addPerm(CommandSender sender, String s) {
-        when(sender.hasPermission(argThat(is(s)))).thenReturn(true);
+        when(sender.hasPermission(ArgumentMatchers.isA(String.class))).thenReturn(true);
     }
 
     private void addOp(CommandSender sender) {
@@ -70,20 +68,17 @@ public class AbstractCommandExecutorTest {
 
     private CommandSender createCommandSender() {
         CommandSender mock = Mockito.mock(CommandSender.class);
-        Answer<Void> answer = new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-                for (Object o : invocationOnMock.getArguments()) {
-                    if (o != null && o.getClass().isArray()) {
-                        for (Object o2 : (Object[]) o) {
-                            messages.append("" + o2 + "\n");
-                        }
-                    } else {
-                        messages.append("" + o + "\n");
+        Answer<Void> answer = invocationOnMock -> {
+            for (Object o : invocationOnMock.getArguments()) {
+                if (o != null && o.getClass().isArray()) {
+                    for (Object o2 : (Object[]) o) {
+                        messages.append("" + o2 + "\n");
                     }
+                } else {
+                    messages.append("" + o + "\n");
                 }
-                return null;
             }
+            return null;
         };
         doAnswer(answer).when(mock).sendMessage(anyString());
         doAnswer(answer).when(mock).sendMessage(Matchers.<String[]>any());

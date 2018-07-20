@@ -1,6 +1,7 @@
 package dk.lockfuglsang.minecraft.command;
 
 import dk.lockfuglsang.minecraft.po.I18nUtil;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import java.util.Collections;
@@ -119,4 +120,12 @@ public abstract class AbstractCommand implements Command {
         return join(args, " ");
     }
 
+    private boolean hasPermissionOverride(CommandSender sender) {
+        return parent != null && parent.hasPermissionOverride(sender);
+    }
+
+    @Override
+    public boolean hasPermission(CommandSender sender, String permission) {
+        return hasPermissionOverride(sender) || sender.hasPermission(permission);
+    }
 }

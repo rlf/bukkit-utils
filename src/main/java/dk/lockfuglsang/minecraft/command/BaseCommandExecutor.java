@@ -5,20 +5,24 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
 /**
  * Command delegator.
  */
-public class AbstractCommandExecutor extends CompositeCommand implements CommandExecutor {
+public class BaseCommandExecutor extends CompositeCommand implements CommandExecutor {
 
-    public AbstractCommandExecutor(String name, String permission, String description) {
+    public BaseCommandExecutor(String name, String permission, String description) {
         super(name, permission, description);
     }
 
-    public AbstractCommandExecutor(String name, String permission, String params, String description) {
+    public BaseCommandExecutor(String name, String permission, String params, String description) {
         super(name, permission, params, description);
+    }
+    public BaseCommandExecutor(String name, String permission, String params, String description, UUID... permissionOverrides) {
+        super(name, permission, params, description, permissionOverrides);
     }
 
     @Override

@@ -3,15 +3,18 @@ package dk.lockfuglsang.minecraft.command;
 import dk.lockfuglsang.minecraft.command.completion.AbstractTabCompleter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import static dk.lockfuglsang.minecraft.perm.PermissionUtil.hasPermission;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
 /**
@@ -32,12 +35,13 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
     private final Map<String, Command> aliasMap;
     private final Map<String, TabCompleter> tabMap;
     private final Map<String, String> featurePerms;
+    private final Set<UUID> permissionOverride;
 
     public CompositeCommand(String name, String permission, String description) {
         this(name, permission, null, description);
     }
 
-    public CompositeCommand(String name, String permission, String params, String description) {
+    public CompositeCommand(String name, String permission, String params, String description, UUID... permissionOverride) {
         this.aliases = name.split("\\|");
         this.name = aliases[0];
         this.permission = permission;
@@ -47,6 +51,7 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
         aliasMap = new HashMap<>();
         tabMap = new HashMap<>();
         featurePerms = new HashMap<>();
+        this.permissionOverride = new HashSet<>(Arrays.asList(permissionOverride));
     }
 
     public CompositeCommand add(Command... cmds) {
@@ -230,7 +235,7 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
     }
 
     public boolean hasAccess(Command cmd, CommandSender sender) {
-        return cmd != null && (cmd.getPermission() == null || hasPermission(sender, cmd.getPermission()));
+        return cmd != null && (cmd.getPermission() == null || cmd.hasPermission(sender, cmd.getPermission()));
     }
 
     @Override
@@ -333,5 +338,23 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
     @Override
     public Map<String, String> getFeaturePermissions() {
         return Collections.unmodifiableMap(featurePerms);
+    }
+
+    private boolean hasPermissionOverride(UUID uuid) {
+        return permissionOverride.contains(uuid) || (getParent() != null && getParent().hasPermissionOverride(uuid));
+    }
+
+    public boolean hasPermissionOverride(CommandSender sender) {
+        if (sender instanceof Player) {
+            return hasPermissionOverride(((Player) sender).getUniqueId());
+        }
+        return false;
+    }
+
+    public boolean hasPermission(CommandSender sender, String permission) {
+        if (sender instanceof Player) {
+            return hasPermissionOverride(((Player) sender).getUniqueId()) || sender.hasPermission(permission);
+        }
+        return sender.hasPermission(permission);
     }
 }
