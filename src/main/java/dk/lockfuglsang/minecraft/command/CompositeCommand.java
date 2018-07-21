@@ -241,6 +241,9 @@ public class CompositeCommand extends AbstractTabCompleter implements Command, T
     @Override
     protected List<String> getTabList(CommandSender commandSender, String term) {
         ArrayList<String> strings = new ArrayList<>();
+        if (!hasAccess(this, commandSender)) {
+            return strings;
+        }
         for (Command cmd : commandMap.values()) {
             if (hasAccess(cmd, commandSender)) {
                 strings.addAll(Arrays.asList(cmd.getAliases()));
