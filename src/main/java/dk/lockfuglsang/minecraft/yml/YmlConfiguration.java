@@ -3,6 +3,9 @@ package dk.lockfuglsang.minecraft.yml;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +36,16 @@ public class YmlConfiguration extends YamlConfiguration {
     public void loadFromString(String contents) throws InvalidConfigurationException {
         super.loadFromString(contents);
         commentParser.loadFromString(contents);
+    }
+
+    @Override
+    public List<String> getStringList(String path) {
+        if (isList(path)) {
+            return super.getStringList(path);
+        } else if (isString(path)) {
+            return Arrays.asList(super.getString(path, "").split(" "));
+        }
+        return new ArrayList<>();
     }
 
     @Override

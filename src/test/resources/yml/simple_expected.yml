@@ -17,6 +17,7 @@ root:
       another-list:
       - what now
       - do you know?
+      space-list: 13:1 34:3
 
     # this is a key and a value
     key: value

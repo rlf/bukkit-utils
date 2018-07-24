@@ -20,7 +20,7 @@ Put this in your `pom.xml`:
   <repositories>
     <repository>
         <id>uSkyBlock-mvn-repo</id>
-        <url>https://raw.github.com/rlf/uSkyBlock/mvn-repo/</url>
+        <url>https://raw.github.com/rlf/mvn-repo/master</url>
     </repository>
   </repositories>
   <dependencies>
@@ -33,6 +33,10 @@ Put this in your `pom.xml`:
 ```
 
 # Version History
+
+## 1.22 - Bukkit 1.13 compatible
+
+## 1.21 - Bukkit 1.12 compatible
 
 ## v1.1
 

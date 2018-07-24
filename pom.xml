@@ -6,7 +6,7 @@
 
     <groupId>dk.lockfuglsang.minecraft</groupId>
     <artifactId>bukkit-utils</artifactId>
-    <version>1.21</version>
+    <version>1.22</version>
 
     <properties>
         <github.global.server>github</github.global.server>
@@ -95,14 +95,39 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>1.13</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency> <!-- Bukkit implementation -->
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                    <version>1.13-R0.1-SNAPSHOT</version>
+                    <optional>true</optional>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>1.12</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency> <!-- Bukkit implementation -->
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                    <version>1.12-R0.1-SNAPSHOT</version>
+                    <optional>true</optional>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
     <dependencies>
-        <dependency> <!-- Bukkit implementation -->
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.12-R0.1-SNAPSHOT</version>
-            <optional>true</optional>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>dk.lockfuglsang.minecraft</groupId>
             <artifactId>po-utils</artifactId>
@@ -114,7 +139,6 @@
             <version>1.6</version>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>

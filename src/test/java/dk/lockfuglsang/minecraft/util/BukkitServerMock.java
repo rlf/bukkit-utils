@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.mockito.stubbing.Answer;
 
@@ -28,7 +29,7 @@ public class BukkitServerMock {
     protected static Map<ItemMeta, Map<String,String>> itemMetaMap = new HashMap<>();
     private static ItemFactory itemFactoryMock;
 
-    public static void setupServerMock() throws NoSuchFieldException, IllegalAccessException {
+    public static Server setupServerMock() throws NoSuchFieldException, IllegalAccessException {
         Field server = Bukkit.class.getDeclaredField("server");
         server.setAccessible(true);
         Server serverMock = createServerMock();
@@ -36,6 +37,7 @@ public class BukkitServerMock {
         server.setAccessible(false);
 
         NBTUtil.setNBTItemStackTagger(new TestNBTItemStackTagger());
+        return serverMock;
     }
 
     public static Server createServerMock() {
@@ -59,6 +61,8 @@ public class BukkitServerMock {
                 .thenAnswer((Answer<ItemMeta>) invocationOnMock -> invocationOnMock.getArguments()[0] != null
                         ? (ItemMeta) invocationOnMock.getArguments()[0]
                         : null);
+        when(itemFactoryMock.updateMaterial(any(ItemMeta.class), any(Material.class)))
+                .thenAnswer(i -> i.getArguments()[1]);
         when(serverMock.getItemFactory()).thenReturn(itemFactoryMock);
         return serverMock;
     }
@@ -67,7 +71,8 @@ public class BukkitServerMock {
         if (!useMetaData) {
             return null;
         }
-        ItemMeta meta = mock(ItemMeta.class);
+        ItemMeta meta = mock(ItemMeta.class, withSettings().extraInterfaces(Damageable.class));
+        when(((Damageable)meta).getDamage()).thenReturn(0);
         // Note: This is a HACKY way of stubbing, using mock and toString()
         final Map<String, String> metaData = new TreeMap<>();
         itemMetaMap.put(meta, metaData);
