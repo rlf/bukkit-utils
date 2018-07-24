@@ -214,6 +214,10 @@ public enum ItemStackUtil {
             itemStack.setType(mat);
             return this;
         }
+        public Builder type(int id) {
+            itemStack.setType(Material.getMaterial(id));
+            return this;
+        }
 
         public Builder subType(int subType) {
             itemStack.setDurability((short) subType);

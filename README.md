@@ -14,6 +14,7 @@ This module is copyrighted by the authors, and licensed for re-use as Apache Lic
 
 # Usage
 
+## Adding dependencies to your Maven project
 Put this in your `pom.xml`:
 
 ```
@@ -27,7 +28,7 @@ Put this in your `pom.xml`:
     <dependency>
         <groupId>dk.lockfuglsang.minecraft</groupId>
         <artifactId>bukkit-utils</artifactId>
-        <version>1.1</version>
+        <version>1.22-bukkit-1.12</version>
     </dependency>
   </dependencies>
 ```
