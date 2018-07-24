@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -39,7 +40,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        setupServerMock();
+        Server server = setupServerMock();
     }
 
     @Before
@@ -173,6 +174,14 @@ public class ItemStackUtilTest extends BukkitServerMock {
         );
         ItemStack[] actual = ItemStackUtil.createItemArray(expected);
         assertThat(actual, is(expected.toArray()));
+    }
+
+    @Test
+    @Ignore("Bukkit.getUnsafe() is not available in test-runner")
+    public void createItemStack_LegacyColor() throws Exception {
+        ItemStack actual = ItemStackUtil.createItemStack("STAINED_GLASS_PANE:14");
+        assertThat(actual.getType(), is(Material.RED_STAINED_GLASS_PANE));
+        assertThat(actual.getDurability(), is(0));
     }
 
     @Test

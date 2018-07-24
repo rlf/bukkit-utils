@@ -6,6 +6,7 @@ import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -36,10 +37,10 @@ public enum ItemStackUtil {
             Matcher m = ITEM_AMOUNT_PATTERN.matcher(reward);
             if (m.matches()) {
                 double p = m.group("prob") != null ? Double.parseDouble(m.group("prob")) : 1;
-                Material type = getItemType(m);
                 short sub = m.group("sub") != null ? (short) Integer.parseInt(m.group("sub"), 10) : 0;
+                Material type = getItemType(m, sub);
                 int amount = Integer.parseInt(m.group("amount"), 10);
-                ItemStack itemStack = new ItemStack(type, amount, sub);
+                ItemStack itemStack = new ItemStack(type, amount, sub < type.getMaxDurability() ? sub : 0);
                 itemStack = NBTUtil.addNBTTag(itemStack, m.group("meta"));
                 itemProbs.add(new ItemProbability(p, itemStack));
             } else {
@@ -49,7 +50,7 @@ public enum ItemStackUtil {
         return itemProbs;
     }
 
-    private static Material getItemType(Matcher m) {
+    private static Material getItemType(Matcher m, short dataValue) {
         String id = m.group("id");
         if (id != null && id.matches("[0-9]*")) {
             throw new IllegalArgumentException("Bukkit 1.13+ doesn't support Item-IDs, please use Material names instead");
@@ -57,7 +58,11 @@ public enum ItemStackUtil {
             Material type = Material.matchMaterial(id);
             if (type == null) {
                 try {
-                    type = Material.matchMaterial(id, true);
+                    Material legacyType = Material.matchMaterial(id, true);
+                    BlockData blockData = Bukkit.getServer().getUnsafe().fromLegacy(legacyType, (byte) (dataValue & 0x0f));
+                    type = blockData != null && blockData.getMaterial() != null && blockData.getMaterial() != Material.AIR
+                            ? blockData.getMaterial()
+                            : legacyType;
                 } catch (NullPointerException e) {
                     throw new IllegalArgumentException("Bukkit 1.13 does not know the material " + id + "!", e);
                 }
@@ -85,10 +90,10 @@ public enum ItemStackUtil {
         }
         Matcher m = ITEM_AMOUNT_PATTERN.matcher(reward);
         if (m.matches()) {
-            Material type = getItemType(m);
             short sub = m.group("sub") != null ? (short) Integer.parseInt(m.group("sub"), 10) : 0;
+            Material type = getItemType(m, sub);
             int amount = Integer.parseInt(m.group("amount"), 10);
-            ItemStack itemStack = new ItemStack(type, amount, sub);
+            ItemStack itemStack = new ItemStack(type, amount, sub < type.getMaxDurability() ? sub : 0);
             if (m.group("meta") != null) {
                 itemStack = NBTUtil.addNBTTag(itemStack, m.group("meta"));
             }
@@ -107,22 +112,22 @@ public enum ItemStackUtil {
     }
 
     public static ItemStack createItemStack(String displayItem, String name, String description) {
-        Material material = Material.DIRT;
-        short subType = 0;
+        Material type = Material.DIRT;
+        short sub = 0;
         String metaStr = null;
         if (displayItem != null) {
             Matcher matcher = ITEM_PATTERN.matcher(displayItem);
             if (matcher.matches()) {
-                material = getItemType(matcher);
-                subType = matcher.group("sub") != null ? (short) Integer.parseInt(matcher.group("sub"), 10) : 0;
+                sub = matcher.group("sub") != null ? (short) Integer.parseInt(matcher.group("sub"), 10) : 0;
+                type = getItemType(matcher, sub);
                 metaStr = matcher.group("meta");
             }
         }
-        if (material == null) {
+        if (type == null) {
             Bukkit.getLogger().warning("Invalid material " + displayItem + " supplied!");
-            material = Material.BARRIER;
+            type = Material.BARRIER;
         }
-        ItemStack itemStack = new ItemStack(material, 1, subType);
+        ItemStack itemStack = new ItemStack(type, 1, sub < type.getMaxDurability() ? sub : 0);
         ItemMeta meta = itemStack.getItemMeta();
         if (meta != null) {
             if (name != null) {
@@ -198,7 +203,7 @@ public enum ItemStackUtil {
 
     public static String getItemName(ItemStack stack) {
         if (stack != null) {
-            if (stack.getItemMeta() != null && stack.getItemMeta().getDisplayName() != null) {
+            if (stack.getItemMeta() != null && stack.getItemMeta().getDisplayName() != null && !stack.getItemMeta().getDisplayName().trim().isEmpty()) {
                 return stack.getItemMeta().getDisplayName();
             }
             ItemInfo itemInfo = Items.itemByStack(stack);

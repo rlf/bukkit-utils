@@ -6,7 +6,7 @@
 
     <groupId>dk.lockfuglsang.minecraft</groupId>
     <artifactId>bukkit-utils</artifactId>
-    <version>1.22</version>
+    <version>1.23-SNAPSHOT</version>
 
     <properties>
         <github.global.server>github</github.global.server>

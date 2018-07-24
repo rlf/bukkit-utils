@@ -27,7 +27,7 @@ Put this in your `pom.xml`:
     <dependency>
         <groupId>dk.lockfuglsang.minecraft</groupId>
         <artifactId>bukkit-utils</artifactId>
-        <version>1.1</version>
+        <version>1.22</version>
     </dependency>
   </dependencies>
 ```
