@@ -52,16 +52,9 @@ public enum ItemStackUtil {
     private static Material getItemType(Matcher m) {
         String id = m.group("id");
         if (id != null && id.matches("[0-9]*")) {
-            throw new IllegalArgumentException("Bukkit 1.13+ doesn't support Item-IDs, please use Material names instead");
+            return Material.getMaterial(Integer.parseInt(id, 10));
         } else if (id != null) {
             Material type = Material.matchMaterial(id);
-            if (type == null) {
-                try {
-                    type = Material.matchMaterial(id, true);
-                } catch (NullPointerException e) {
-                    throw new IllegalArgumentException("Bukkit 1.13 does not know the material " + id + "!", e);
-                }
-            }
             if (type != null) {
                 return type;
             }

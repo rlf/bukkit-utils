@@ -73,12 +73,12 @@ public class ItemStackUtilTest extends BukkitServerMock {
         List<ItemStackUtil.ItemProbability> actual = ItemStackUtil.createItemsWithProbabilty(Arrays.asList(
                 "{p=0.9}LAVA_BUCKET:1",
                 "{p=0.2}STONE:2:3",
-                "{p=0.3}NETHER_BRICK_FENCE:2"
+                "{p=0.3}NETHER_FENCE:2"
         ));
         List<ItemStackUtil.ItemProbability> expected = Arrays.asList(
                 new ItemStackUtil.ItemProbability(0.9, new ItemStack(Material.LAVA_BUCKET, 1)),
                 new ItemStackUtil.ItemProbability(0.2, new ItemStack(Material.STONE, 3, (short) 2)),
-                new ItemStackUtil.ItemProbability(0.3, new ItemStack(Material.NETHER_BRICK_FENCE, 2))
+                new ItemStackUtil.ItemProbability(0.3, new ItemStack(Material.NETHER_FENCE, 2))
         );
         assertThat(actual, notNullValue());
         assertThat(actual, is(expected));
@@ -90,7 +90,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
         List<ItemStackUtil.ItemProbability> actual = ItemStackUtil.createItemsWithProbabilty(Arrays.asList(
                 "{p=0.9}LAVA_BUCKET:1{Potion:Death}",
                 "{p=0.2}STONE:2:3 {MyLittle:\"Pony\"}",
-                "{p=0.3}NETHER_BRICK_FENCE:2\t {meta:{nested:{data:[{},{}]}}}"
+                "{p=0.3}NETHER_FENCE:2\t {meta:{nested:{data:[{},{}]}}}"
         ));
         List<ItemStackUtil.ItemProbability> expected = Arrays.asList(
                 new ItemStackUtil.ItemProbability(0.9, NBTUtil.setNBTTag(
@@ -100,7 +100,7 @@ public class ItemStackUtilTest extends BukkitServerMock {
                         new ItemStack(Material.STONE, 3, (short) 2),
                         "{MyLittle:\"Pony\"}")),
                 new ItemStackUtil.ItemProbability(0.3, NBTUtil.setNBTTag(
-                        new ItemStack(Material.NETHER_BRICK_FENCE, 2),
+                        new ItemStack(Material.NETHER_FENCE, 2),
                         "{meta:{nested:{data:[{},{}]}}}"))
         );
         assertThat(actual, notNullValue());
@@ -128,12 +128,12 @@ public class ItemStackUtilTest extends BukkitServerMock {
         List<ItemStack> actual = ItemStackUtil.createItemList(Arrays.asList(
                 "LAVA_BUCKET:1",
                 "STONE:2:3",
-                "NETHER_BRICK_FENCE:2"
+                "NETHER_FENCE:2"
         ));
         List<ItemStack> expected = Arrays.asList(
                 new ItemStack(Material.LAVA_BUCKET, 1),
                 new ItemStack(Material.STONE, 3, (short) 2),
-                new ItemStack(Material.NETHER_BRICK_FENCE, 2)
+                new ItemStack(Material.NETHER_FENCE, 2)
         );
         assertThat(actual, itemStacks(expected));
     }
@@ -141,10 +141,10 @@ public class ItemStackUtilTest extends BukkitServerMock {
     @Test
     public void createItemListStringAndListWithNBTTags() throws Exception {
         useMetaData = true;
-        List<ItemStack> actual = ItemStackUtil.createItemList(Arrays.asList("NETHER_BRICK_FENCE:2{meta2}", "JUNGLE_WOOD:256 {meta3}"));
+        List<ItemStack> actual = ItemStackUtil.createItemList(Arrays.asList("NETHER_FENCE:2{meta2}", "WOOD:2:256 {meta3}"));
         List<ItemStack> expected = Arrays.asList(
-                NBTUtil.setNBTTag(new ItemStack(Material.NETHER_BRICK_FENCE, 2), "{meta2}"),
-                NBTUtil.setNBTTag(new ItemStack(Material.JUNGLE_WOOD, 256), "{meta3}") // Jungle Wood Planks
+                NBTUtil.setNBTTag(new ItemStack(Material.NETHER_FENCE, 2), "{meta2}"),
+                NBTUtil.setNBTTag(new ItemStack(Material.WOOD, 256, (short)2), "{meta3}") // Jungle Wood Planks
         );
         assertThat(actual, is(expected));
         assertThat(actual.get(1).getAmount(), is(256));
@@ -168,8 +168,8 @@ public class ItemStackUtilTest extends BukkitServerMock {
         List<ItemStack> expected = Arrays.asList(
                 new ItemStack(Material.LAVA_BUCKET, 1),
                 new ItemStack(Material.STONE, 3, (short) 2),
-                new ItemStack(Material.NETHER_BRICK_FENCE, 2),
-                new ItemStack(Material.JUNGLE_WOOD, 256) // Jungle Wood Planks
+                new ItemStack(Material.NETHER_FENCE, 2),
+                new ItemStack(Material.WOOD, 256, (short)2) // Jungle Wood Planks
         );
         ItemStack[] actual = ItemStackUtil.createItemArray(expected);
         assertThat(actual, is(expected.toArray()));
