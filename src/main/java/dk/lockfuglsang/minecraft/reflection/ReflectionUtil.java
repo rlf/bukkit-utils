@@ -6,9 +6,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Wrapper methods that allow accesss to reflection for backward compatible code.
@@ -159,13 +163,41 @@ public class ReflectionUtil {
         return null;
     }
 
-    private static Method getMethod(Class<?> aClass, String methodName, Class[] argTypes) throws NoSuchMethodException {
+    public static Method getMethod(Class<?> aClass, String methodName, Class... argTypes) throws NoSuchMethodException {
         try {
             // Declared gives access to non-public
             return aClass.getDeclaredMethod(methodName, argTypes);
         } catch (NoSuchMethodException e) {
             return aClass.getMethod(methodName, argTypes);
         }
+    }
+
+    public static Method findMethod(Class<?> aClass, Class returnType, Class... argTypes) throws NoSuchMethodException {
+        List<Method> methods = findMethods(aClass, returnType, argTypes);
+        if (methods.isEmpty()) {
+            throw new NoSuchMethodException("No method matching " + returnType + " ?(" + Arrays.toString(argTypes) + ")");
+        }
+        if (methods.size() > 1) {
+            throw new NoSuchMethodException("More than 1 method matching " + returnType + " ?(" + Arrays.toString(argTypes) + ") : " + methods);
+        }
+        return methods.get(0);
+    }
+
+    public static List<Method> findMethods(Class<?> aClass, Class returnType, Class... argTypes) throws NoSuchMethodException {
+        List<Method> methods = new ArrayList<>();
+        for (Method m : aClass.getDeclaredMethods()) {
+            if (m.getReturnType() == returnType && m.getParameterTypes().length == argTypes.length) {
+                try {
+                    Method mLookup = aClass.getMethod(m.getName(), argTypes);
+                    if (mLookup != null) {
+                        methods.add(mLookup);
+                    }
+                } catch (NoSuchMethodException e) {
+                    // ignore...
+                }
+            }
+        }
+        return methods;
     }
 
     /**
@@ -293,5 +325,32 @@ public class ReflectionUtil {
             argTypes[ix++] = arg != null ? arg.getClass() : null;
         }
         return newInstance(className, argTypes, args);
+    }
+
+    public static List<String> dumpMethods(Class aClass) {
+        List<Method> methods = Arrays.asList(aClass.getDeclaredMethods());
+        List<String> methodDescriptions = new ArrayList<>();
+        String version = getNMSVersion();
+        for (Method m : methods) {
+            List<String> parms = Arrays.asList(m.getParameterTypes()).stream().map(f -> f.getName()).collect(Collectors.toList());
+            String parmString = Arrays.toString(parms.toArray(new String[0]));
+            parmString = parmString.substring(1, parmString.length() - 1);
+            String description = (Modifier.isPublic(m.getModifiers()) ? "public " : Modifier.isPrivate(m.getModifiers()) ? "private " : "")
+                    + (Modifier.isStatic(m.getModifiers()) ? "static " : "")
+                    + m.getReturnType() + " " + m.getName()
+                    + "(" + parmString + ")";
+            description = description
+                    .replaceAll("class net.minecraft.server." + version + ".", "")
+                    .replaceAll("net.minecraft.server." + version + ".", "")
+                    .replaceAll("java.lang.", "");
+            methodDescriptions.add(description);
+        }
+        List<String> list = new ArrayList<String>();
+
+        list.add(aClass.toString().replaceAll("class net.minecraft.server." + version + ".", "")
+                .replaceAll("net.minecraft.server." + version + ".", "")
+                .replaceAll("java.lang.", "") + ":");
+        list.addAll(methodDescriptions.stream().sorted(String::compareTo).collect(Collectors.toList()));
+        return list;
     }
 }
