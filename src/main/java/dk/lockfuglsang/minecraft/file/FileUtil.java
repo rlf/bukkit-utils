@@ -115,6 +115,8 @@ public enum FileUtil {;
     }
 
     public static String getBasename(String file) {
+        String[] lastPart = file.split("(/|\\\\)");
+        file = lastPart[lastPart.length-1];
         if (file != null && file.lastIndexOf('.') != -1) {
             return file.substring(0, file.lastIndexOf('.'));
         }

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,6 +110,29 @@ public enum ItemStackUtil {
 
     public static ItemStack createItemStack(String displayItem) {
         return createItemStack(displayItem, null, null);
+    }
+
+    public static ItemStack createItemStackSkull(String texture, String name, String description) {
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1);
+        String metaStr = String.format("{display:{Name:\"%s\"},SkullOwner:{Id:\"%s\",Properties:{textures:[{Value:\"%s\"}]}}}", name, createUniqueId(texture, name, description), texture);
+        itemStack = NBTUtil.addNBTTag(itemStack, metaStr);
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta != null) {
+            if (name != null) {
+                meta.setDisplayName(FormatUtil.normalize(name));
+            }
+            List<String> lore = new ArrayList<>();
+            if (description != null) {
+                lore.addAll(FormatUtil.wordWrap(FormatUtil.normalize(description), 30, 30));
+            }
+            meta.setLore(lore);
+            itemStack.setItemMeta(meta);
+        }
+        return itemStack;
+    }
+
+    public static UUID createUniqueId(String texture, String name, String description) {
+        return new UUID(texture.hashCode(), ("" + name + description).hashCode());
     }
 
     public static ItemStack createItemStack(String displayItem, String name, String description) {
@@ -206,8 +230,12 @@ public enum ItemStackUtil {
             if (stack.getItemMeta() != null && stack.getItemMeta().getDisplayName() != null && !stack.getItemMeta().getDisplayName().trim().isEmpty()) {
                 return stack.getItemMeta().getDisplayName();
             }
+            /*
+            Vault isn't 1.13 compatible (yet)
             ItemInfo itemInfo = Items.itemByStack(stack);
             return itemInfo != null ? itemInfo.getName() : "" + stack.getType();
+             */
+            return tr(FormatUtil.camelcase(stack.getType().name()).replaceAll("([A-Z])", " $1").trim());
         }
         return null;
     }

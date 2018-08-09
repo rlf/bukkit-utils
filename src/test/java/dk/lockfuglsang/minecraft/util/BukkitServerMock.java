@@ -5,6 +5,7 @@ import dk.lockfuglsang.minecraft.nbt.NBTUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.UnsafeValues;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -64,6 +65,10 @@ public class BukkitServerMock {
         when(itemFactoryMock.updateMaterial(any(ItemMeta.class), any(Material.class)))
                 .thenAnswer(i -> i.getArguments()[1]);
         when(serverMock.getItemFactory()).thenReturn(itemFactoryMock);
+
+        UnsafeValues unsafeMock = mock(UnsafeValues.class);
+        when(unsafeMock.fromLegacy(any(Material.class))).thenAnswer(a -> (Material) a.getArguments()[0]);
+        when(serverMock.getUnsafe()).thenReturn(unsafeMock);
         return serverMock;
     }
 

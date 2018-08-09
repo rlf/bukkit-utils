@@ -14,4 +14,10 @@ public class FileUtilTest {
         assertThat(FileUtil.getExtension("basename.ext"), is("ext"));
         assertThat(FileUtil.getExtension("my file.with.dot.yml"), is("yml"));
     }
+
+    @Test
+    public void testBaseName() {
+        assertThat(FileUtil.getBasename("dir/something/filename.txt"), is("filename"));
+        assertThat(FileUtil.getBasename("dir\\something\\filename.txt"), is("filename"));
+    }
 }

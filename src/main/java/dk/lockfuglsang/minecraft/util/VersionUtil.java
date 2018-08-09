@@ -65,7 +65,11 @@ public enum VersionUtil {;
 
         @Override
         public String toString() {
-            return "v" + major + "." + minor + "." + micro + "-" + sub;
+            return "v" + major + "." + minor + "." + micro + (sub != null ? "-" + sub : "");
+        }
+
+        public String toReleaseString() {
+            return "v" + major + "_" + minor;
         }
     }
 }

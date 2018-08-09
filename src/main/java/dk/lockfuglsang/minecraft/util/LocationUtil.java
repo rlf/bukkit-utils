@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public enum LocationUtil {
     ;
-    private static final Pattern LOCATION_PATTERN = Pattern.compile("((?<world>[^:]+):)?(?<x>[\\-0-9\\.]+),(?<y>[\\-0-9\\.]+),(?<z>[\\-0-9\\.]+)(:(?<yaw>[\\-0-9\\.]+):(?<pitch>[\\-0-9\\.]+))?");
+    private static final Pattern LOCATION_PATTERN = Pattern.compile("((?<world>[^:/]+)[:/])?(?<x>[\\-0-9\\.]+),(?<y>[\\-0-9\\.]+),(?<z>[\\-0-9\\.]+)(:(?<yaw>[\\-0-9\\.]+):(?<pitch>[\\-0-9\\.]+))?");
 
     public static String asString(Location loc) {
         if (loc == null) {
@@ -33,14 +33,14 @@ public enum LocationUtil {
      * Convenience method for when a location is needed as a yml key.
      */
     public static String asKey(Location loc) {
-        return asString(loc).replaceAll(":", "-").replaceAll("\\.", "_");
+        return asString(loc).replaceAll(":", "/").replaceAll("\\.", "_");
     }
 
     public static Location fromString(String locString) {
         if (locString == null || locString.isEmpty()) {
             return null;
         }
-        Matcher m = LOCATION_PATTERN.matcher(locString);
+        Matcher m = LOCATION_PATTERN.matcher(locString.replaceAll("_", "\\."));
         if (m.matches()) {
             return new Location(Bukkit.getWorld(m.group("world")),
                     Double.parseDouble(m.group("x")),
