@@ -18,7 +18,7 @@
         </repository>
         <repository>
             <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <url>https://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
         <repository>
             <!-- Our repo is last - so we can put in fallback artifacts when the other repos are down -->

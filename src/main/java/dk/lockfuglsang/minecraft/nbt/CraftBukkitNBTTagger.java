@@ -83,9 +83,13 @@ public class CraftBukkitNBTTagger implements NBTItemStackTagger {
 
     private static Class<?> getNBTTagParser(Object nmsItem) {
         try {
-            return Class.forName(getPackageName(nmsItem) + ".MojangsonParser");
-        } catch (ClassNotFoundException e) {
-            log.info("Unable to instantiate MojangsonParser: " + e);
+            return Class.forName("net.minecraft.nbt.MojangsonParser");
+        } catch (ClassNotFoundException e1) {
+            try {
+                return Class.forName(getPackageName(nmsItem) + ".MojangsonParser");
+            } catch (ClassNotFoundException e) {
+                log.info("Unable to instantiate MojangsonParser: " + e);
+            }
         }
         return null;
     }
